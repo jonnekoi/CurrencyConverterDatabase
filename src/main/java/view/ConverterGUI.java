@@ -18,7 +18,8 @@ public class ConverterGUI extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        Controller controller = new Controller(new model.Currency(), this);
+        datasource.dbconn db = new datasource.dbconn();
+        Controller controller = new Controller(db, this);
         VBox root = new VBox();
         Label amountLabel = new Label("Amount");
         Label fromLabel = new Label("From");

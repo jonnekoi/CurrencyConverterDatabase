@@ -1,14 +1,16 @@
 package controller;
 
-import model.Currency;
+import dao.CurrencyDao;
+import datasource.dbconn;
 import view.ConverterGUI;
+import java.sql.SQLException;
 
 public class Controller {
-    private Currency currencyModel;
+    private CurrencyDao currencyDao;
     private ConverterGUI converterView;
 
-    public Controller(Currency currencyModel, ConverterGUI converterView) {
-        this.currencyModel = currencyModel;
+    public Controller(dbconn db, ConverterGUI converterView) {
+        this.currencyDao = new CurrencyDao(db);
         this.converterView = converterView;
     }
 
@@ -16,7 +18,15 @@ public class Controller {
         String from = converterView.fromCurrency();
         String to = converterView.toCurrency();
         double amount = converterView.getAmount();
-        double result = currencyModel.convert(from, to, amount);
+        double result = 0;
+
+        try{
+            double fromRate = currencyDao.getExchangeRage(from);
+            double toRate = currencyDao.getExchangeRage(to);
+            result = amount * toRate / fromRate;
+        }catch (SQLException e){
+            System.out.println("error: " + e.getMessage());
+        }
         return result;
     }
     public static void main(String[] args) {
